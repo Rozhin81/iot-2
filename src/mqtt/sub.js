@@ -9,11 +9,11 @@ const {SlaveService} = require("../services/slaveService");
 const {RedisService}=require("../services/redisService");
 const redisObj=new RedisService()
 
-try{
-    mongoose.connect("mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse");
-}catch{
-    console.log("can't connect to mongoDB");
-};
+// try{
+//     mongoose.connect("mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse");
+// }catch{
+//     console.log("can't connect to mongoDB");
+// };
 
 
 client.on("connect", () => {

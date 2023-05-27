@@ -5,7 +5,7 @@ let {Validation} = require("../lib/validation");
 let {Token} = require("../lib/token");
 const mongoose = require("mongoose");
 const { hashs } = require("../model/hash");
-mongoose.connect("mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse");
+// mongoose.connect("mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse");
 const token = new Token();
 
 class AuthService {
