@@ -9,11 +9,11 @@ const {SlaveService} = require("../services/slaveService");
 const {RedisService}=require("../services/redisService");
 const redisObj=new RedisService()
 
-try{
-    mongoose.connect("mongodb://127.0.0.1:27017/greenhouse");
-}catch{
-    console.log("can't connect to mongoDB");
-};
+// try{
+//     mongoose.connect("mongodb://46.245.77.82:31132/greenhouse");
+// }catch{
+//     console.log("can't connect to mongoDB");
+// };
 
 
 client.on("connect", () => {

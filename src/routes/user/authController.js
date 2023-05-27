@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const { Validation } = require("../../lib/validation");
 const { send_email } = require("../../lib/sendEmail");
 const { hashs } = require("../../model/hash");
-const ROLES_LIST = require("../../lib/roles_list");
+const Role = require("../../lib/roles_list");
 
 module.exports = {
 
@@ -22,8 +22,8 @@ module.exports = {
       })
     } else {
       let hashed = await AuthService.hashPassword(pass)
-      AuthService.addNewPerson(req.body, hashed , ROLES_LIST.USER).then((user)=>{
-        let userToken = token.generateToken({ email: user.email, id: user._id, role: ROLES_LIST.USER});
+      AuthService.addNewPerson(req.body, hashed , Role.USER).then((user)=>{
+        let userToken = token.generateToken({ email: user.email, id: user._id, role: Role.USER});
         userToken.then((token) => {
           send_email(
             "sendLink.html",
