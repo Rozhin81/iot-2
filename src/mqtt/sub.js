@@ -9,11 +9,15 @@ const {SlaveService} = require("../services/slaveService");
 const {RedisService}=require("../services/redisService");
 const redisObj=new RedisService()
 
-// try{
-//     mongoose.connect("mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse");
-// }catch{
-//     console.log("can't connect to mongoDB");
-// };
+mongoose.connect(
+    "mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse",
+      {
+          maxPoolSize: 10,
+          authSource: "admin",
+          user: "admin",
+          pass: "c8olxij6adhpyuq"
+    }
+  );
 
 
 client.on("connect", () => {
