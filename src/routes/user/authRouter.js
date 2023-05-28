@@ -6,7 +6,7 @@ const Role = require("../../lib/roles_list")
 
 router.post(
   "/auth",
-  [MiddleWare.emptyCheck, MiddleWare.mailCheck],
+  // [MiddleWare.emptyCheck, MiddleWare.mailCheck],
   authController.loginUser
 );
 
