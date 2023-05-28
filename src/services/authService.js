@@ -7,15 +7,15 @@ const mongoose = require("mongoose");
 const { hashs } = require("../model/hash");
 const token = new Token();
 
-mongoose.connect(
-  "mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse",
-    {
-        maxPoolSize: 10,
-        authSource: "admin",
-        user: "admin",
-        pass: "c8olxij6adhpyuq"
-  }
-);
+// mongoose.connect(
+//   "mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse",
+//     {
+//         maxPoolSize: 10,
+//         authSource: "admin",
+//         user: "admin",
+//         pass: "c8olxij6adhpyuq"
+//   }
+// );
 
 class AuthService {
   static addNewPerson(body, password , roles) {
@@ -67,7 +67,6 @@ class AuthService {
             console.log("active")
             resolve(user); //account is active
           } else {
-            console.log("403")
             reject(403); //account is deactivated
           }
         }else{

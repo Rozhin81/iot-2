@@ -29,7 +29,7 @@ module.exports = {
             "sendLink.html",
             (replacement = {
               name: req.body.fullname,
-              link: `http://greenhouse.runflare.run/accounts/verify?token=${token}`,
+              link: `http:/localhost:3000/accounts/verify?token=${token}`,
             }),
             req.body.email,
             "Verify your account"
@@ -58,27 +58,19 @@ module.exports = {
     const password = req.body.password.trim();
     let p = AuthService.loginCheck(email, password);
     p.then(async (message) => {
-      let userToken = await token.generateToken({ email: message.email, id: message._id, role: message.role }).then((data) => {
-        console.log(data)
-        return data;
+      await token.generateToken({ email: message.email, id: message._id, role: message.role })
+      .then((data) => {
+          console.log(data)
+        return res.status(200).send({
+          status: "Ok",
+          message: "welcome to your page",
+          data: {
+            token: data,
+          }
+        });
       }).catch((error) => { return error });
-      return res.status(200).send({
-        status: "Ok",
-        message: "welcome to your page",
-        data: {
-          token: userToken,
-        },
-      });
-
     }).catch((message) => {
-      jwt.verify(user_token, process.env.SECRET_KEY,{
-        ignoreExpiration:true
-      },async function(err,decoded){
-        if(decoded){
-          console.log(decoded.email);
-          await accounts.findOneAndDelete({email:decoded.email,status:"deactive"});
-        }
-      });
+      console.log(message)
       if (message == 403) {
         return res.status(403).send({
           status: "error",
