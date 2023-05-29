@@ -29,7 +29,7 @@ module.exports = {
             "sendLink.html",
             (replacement = {
               name: req.body.fullname,
-              link: `http:/localhost:3000/accounts/verify?token=${token}`,
+              link: `http://greenhouse.runflare.run/accounts/verify?token=${token}`,
             }),
             req.body.email,
             "Verify your account"
