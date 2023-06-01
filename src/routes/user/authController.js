@@ -222,8 +222,8 @@ module.exports = {
   },
 
   recognizeRole:(req,res,next)=>{
-    if(req.headers['authorization'].trim()!=''){
-      token.verifyToken(req.headers.token)
+    if(req.headers['authorization']){
+      token.verifyToken(req.headers['authorization'])
       .then((message)=>{
         return res.status(200).send({
           status : "ok",
