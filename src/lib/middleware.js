@@ -19,7 +19,7 @@ class MiddleWare {
   static emptyCheck(req, res, next) {
     let found = false;
     for (let key in req.body) {
-      if (req.body[key].length == 0) {
+      if (req.body[key].trim().length == 0) {
         found = true;
         return res.status(404).send({
           status: "error",

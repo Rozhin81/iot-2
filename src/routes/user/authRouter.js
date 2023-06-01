@@ -46,6 +46,12 @@ router.get(
   '/change-role' ,
   [MiddleWare.checkToken , MiddleWare.verifyRoles(Role.SUPERADMIN)] ,
   authController.changeRoles
+);
+
+router.get(
+  "/getInfo",
+  [MiddleWare.emptyCheck,MiddleWare.checkToken],
+  authController.recognizeRole
 )
 
 router.post("/google-signup",authController.googleVerify)  ;
