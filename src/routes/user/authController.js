@@ -228,13 +228,13 @@ module.exports = {
         return res.status(200).send({
           status : "ok",
           message : "verify token successful",
-          data : message
+          data : req.headers['authorization'].trim()
         })
       }).catch((message)=>{
         return res.status(498).send({
           status:"error",
           message:"invalid token",
-          data : {}
+          data : req.headers['authorization'].trim()
         })
       })
 
