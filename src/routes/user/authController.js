@@ -222,19 +222,19 @@ module.exports = {
   },
 
   recognizeRole:(req,res,next)=>{
-    if(!req.headers['authorization'].trim()==''){
+    if(req.headers['authorization'].trim()!=''){
       token.verifyToken(req.headers.token)
       .then((message)=>{
         return res.status(200).send({
           status : "ok",
           message : "verify token successful",
-          data : req.headers['authorization'].trim()
+          data :message
         })
       }).catch((message)=>{
         return res.status(498).send({
           status:"error",
           message:"invalid token",
-          data : req.headers['authorization'].trim()
+          data : message
         })
       })
 
