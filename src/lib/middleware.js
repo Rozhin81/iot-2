@@ -91,7 +91,8 @@ class MiddleWare {
       const roleArray = [...allowedRoles];
         const roles = req.decoded.role;
         const result = [roles].map(each_role => roleArray.includes(each_role)).find(val => val ==true);
-        if(!result){res.status(403).send({
+        if(!result){
+          res.status(403).send({
           status : "access denid" ,
           message : "You dont have permission to this url"
         })

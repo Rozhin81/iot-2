@@ -30,13 +30,13 @@ app.use("/slaves" ,slaveRouter)
 
 const start=()=>{
     mongoose.connect(
-        process.env.DB_URL,
-        {
-              maxPoolSize: 10,
-              authSource: "admin",
-              user: "admin",
-              pass: "c8olxij6adhpyuq"
-        }
+        process.env.DB_URL
+        // ,{
+        //       maxPoolSize: 10,
+        //       authSource: "admin",
+        //       user: "admin",
+        //       pass: "c8olxij6adhpyuq"
+        // }
       );
     app.listen(process.env.HTTP_PORT)
 }

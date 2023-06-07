@@ -44,7 +44,7 @@ router.put(
 
 router.get(
   '/change-role' ,
-  [MiddleWare.checkToken , MiddleWare.verifyRoles(Role.SUPERADMIN)] ,
+  [MiddleWare.checkToken ] ,
   authController.changeRoles
 );
 

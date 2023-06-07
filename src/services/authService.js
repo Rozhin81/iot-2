@@ -100,15 +100,27 @@ class AuthService {
     return Date.now() - expTime < 86400000;
   };
 
-  static updateRole(user_email , newRole){
-    return new Promise((resolve , reject)=>{
-      let findUser = accounts.findOneAndUpdate({email : user_email} , {role : newRole})
-      if(findUser){
-        resolve(findUser)
-      }else{
-        reject("can't find user")
-      }
-    })
+  static async updateRole(user_email , newRole){
+    try{
+        return new Promise(async(resolve , reject)=>{
+          let roleUser = await accounts.findOne({email : user_email});
+          if(roleUser!=null){
+            if(roleUser.role!="SUPERADMIN"){
+              let findUser = await accounts.findOneAndUpdate({email : user_email} , {role : newRole});
+              resolve(findUser)
+            }else{
+              reject("You can't change role of SUPERSDMIN")
+            }
+          }else{
+            reject("can't find user")
+          }
+
+      })
+  }catch{
+    console.log("something went wrong")
+  }
+
+
   }
 }
 

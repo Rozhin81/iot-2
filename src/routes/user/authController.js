@@ -204,7 +204,7 @@ module.exports = {
 
   },
 
-  changeRoles :(req,res,next)=>{
+  changeRoles : (req,res,next)=>{
       AuthService.updateRole(req.body.user_email , req.body.newRole)
       .then((message)=>{
       return res.status(200).send({
@@ -215,7 +215,7 @@ module.exports = {
       }).catch((message)=>{
       return res.status(404).send({
         status : "error" ,
-        message : "can't find user" ,
+        message : message ,
         data : {}
       })
       })
