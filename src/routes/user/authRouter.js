@@ -48,7 +48,7 @@ router.get(
   authController.changeRoles
 );
 
-router.get(
+router.post(
   "/getInfo",
   [MiddleWare.emptyCheck,MiddleWare.checkToken],
   authController.recognizeRole
