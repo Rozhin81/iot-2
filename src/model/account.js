@@ -16,11 +16,6 @@ const accountSchema = new mongoose.Schema({
     trim: true,
     required : true
   },
-  actions: {
-    type: Array,
-    trim: true,
-    required : true
-  },
   status: {
     type: String,
     trim: true,
