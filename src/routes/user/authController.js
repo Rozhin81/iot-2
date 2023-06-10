@@ -120,7 +120,7 @@ module.exports = {
         "sendLink.html",
         (replacement = {
           name: user.fullname,
-          link: `http://localhost:3000/accounts/reset-password?hash=${randomHash}`,
+          link: `http://greenhouse.runflare.run/accounts/getInfo/accounts/reset-password?hash=${randomHash}`,
         }),
         email,
         "Reset password"
