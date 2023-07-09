@@ -34,6 +34,7 @@ class MasterService{
        
     };
 
+    
     static  updateMaster(materId,userId,name,newMasterId){
         return new Promise((resolve,reject)=>{
             master.findOneAndUpdate({master_id:materId,user_id:userId},{name:name,master_id:newMasterId},(err,res)=>{

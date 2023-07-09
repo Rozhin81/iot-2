@@ -73,6 +73,7 @@ module.exports = {
             })
         });
     },
+    
 
     data :async function(req,res){
           await PlantSensorData.aggregate(

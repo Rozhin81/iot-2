@@ -7,15 +7,17 @@ const mongoose = require("mongoose");
 const { hashs } = require("../model/hash");
 const token = new Token();
 
-// mongoose.connect(
-//   "mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse",
-//     {
-//         maxPoolSize: 10,
-//         authSource: "admin",
-//         user: "admin",
-//         pass: "c8olxij6adhpyuq"
-//   }
-// );
+mongoose.connect(
+  // "mongodb://localhost:27017/greenhouse"
+  "mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse",
+    {
+        maxPoolSize: 10,
+        authSource: "admin",
+        user: "admin",
+        pass: "c8olxij6adhpyuq"
+  }
+);
+
 
 class AuthService {
   static addNewPerson(body, password , roles) {
@@ -38,7 +40,7 @@ class AuthService {
   static hashPassword(password) {
     try{
       let newPass = password.toString();
-      let salt = parseInt(bcrypt.genSalt(10));
+      let salt = parseInt(bcrypt.genSalt(10))
       let hash = bcrypt.hash(newPass, salt);
       return hash
     }
@@ -97,7 +99,7 @@ class AuthService {
 
 
   static checkExpiration(expTime) {
-    return Date.now() - expTime < 86400000;
+    return Date.now() - expTime < 1800000;
   };
 
   static async updateRole(user_email , newRole){

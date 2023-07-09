@@ -1,41 +1,32 @@
 const mqtt = require("mqtt");
-const client = mqtt.connect("mqtt://broker.emqx.io:1883");
-const topicName = "m003/publish";
+// const topicName = `m#/publish`;
 const { slaves } = require("../model/slave");
-const { PlantSensorData } = require("../model/sensorData");
-const mongoose = require("mongoose");
+// const { PlantSensorData } = require("../model/sensorData");
+// const mongoose = require("mongoose");
 const {masterSavedSlaves} = require("../model/masterSlaves");
 const {SlaveService} = require("../services/slaveService");
 const {RedisService}=require("../services/redisService");
+const {Automation}=require("../services/automationService")
 const redisObj=new RedisService()
 
-mongoose.connect(
-    "mongodb://admin:c8olxij6adhpyuq@remote-asiatech.runflare.com:31132/greenhouse",
-      {
-          maxPoolSize: 10,
-          authSource: "admin",
-          user: "admin",
-          pass: "c8olxij6adhpyuq"
-    }
-  );
+// try{
+//     mongoose.connect("mongodb://127.0.0.1:27017/greenhouse");
+// }catch{
+//     console.log("can't connect to mongoDB");
+// };
 
 
-client.on("connect", () => {
-    console.log("connected");
-    client.subscribe([topicName], (err, granted) => {
-        if (err) {
-            console.log("Can't connect");
+function subDataToJsfile(entrydata){
+    return new Promise(async(resolve,reject)=>{
+        let data=[];
+        let editeddata = entrydata.replace(/"/g,'').replace("{", "").replace("}", "").trim().split("\n");
+        for(let x of editeddata){
+            x=x.replace(/,\s*$/, "").replace(/"/g,'');
+            data.push(x)
         }
-        console.log(`Subscribe to topic ${topicName}`);
-    })
-});
-
-client.on("message", async (topic, message, packet) => {
-    if (topic === topicName) {
-        let data = packet.payload.toString().replace("{", "").replace("}", "").trim().split("\n");
+        // console.log(data)
         for (let i = 0 ; i < data.length; i++){
             if(data[i][0]==='"'){
-                console.log(data[i])
                 try{
                     await masterSavedSlaves.create({
                         time : Date.now(),
@@ -46,35 +37,29 @@ client.on("message", async (topic, message, packet) => {
                 };
 
             }else{
-                let each_data = data[i].replace("s:", "").split(",");
-                let slaveId=('s' + each_data[0]).toString();
-                let findSlaveId = await slaves.findOne({ slaveId: slaveId});
-                if (findSlaveId != null) {
-                    let keys=["temp","soil","ambient","light"];
-                    for(let x=1;x<=keys.length;x++){
-                        console.log(`${slaveId}_${keys[x-1]}`)
-                        redisObj.setData(`${slaveId}_${keys[x-1]}`,each_data[x])
-                    };
+                for(let each_data of data){ 
+                    let eachData = each_data.replace("s:", "s").split(","); 
+                    let slaveId=eachData[0].toString();
+                    slaves.findOne({slaveId: slaveId},async function(err,findSlave){
+                        if(err){
+                            console.log("can't find");
+                            reject("err")
+                        }
+                        else{
+                            const edit_slaveId=eachData[0];
+                            Automation.saveToFile(`/home/rozhan/rahavard/backend/src/mqtt/jsFiles/${edit_slaveId}.js`,eachData);
+                            // await redisObj.setData(eachData,slaveId);
+                            resolve("ok")
 
-                    await SlaveService.addSensorData(each_data , findSlaveId._id)
-                    .then((message)=>{
-                        console.log(message)                    
-                    }).catch((e)=>{
-                        console.log(e)
-                    })
+                        }
+                    }); 
+                    
+                }
                 };
-            } 
-      };
-        console.log("finish")
-   }
-});
+            
+        };
+        console.log("finish");
+    }
+)};
 
-
-
-
-
-
-
-
-
-
+module.exports={subDataToJsfile}

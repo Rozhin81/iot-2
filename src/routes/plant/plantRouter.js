@@ -5,6 +5,7 @@ const multer = require("multer");
 const upload = multer({ dest: "../../public/uploads/" });  //where to store the files
 const { MiddleWare } = require("../../lib/middleware");
 
+
 router.get("/lists",
     [MiddleWare.checkToken],
     plantController.listOfPlants);
@@ -13,7 +14,6 @@ router.get("/lists",
 router.get("/lists/:plantId",
     [MiddleWare.checkToken],
     plantController.findPlantById);
-
 
 
 router.post("/new", upload.single("image"),

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { Token } = require("../../lib/token");
 const { accounts } = require("../../model/account")
 let token = new Token();
+
 module.exports = {
     addMaster: async (req, res) => {
         let masterId = req.body.master_id;

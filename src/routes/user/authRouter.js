@@ -4,23 +4,6 @@ const authController = require("./authController");
 const { MiddleWare } = require("../../lib/middleware");
 const Role = require("../../lib/roles_list")
 
-router.post(
-  "/auth",
-  [MiddleWare.emptyCheck, MiddleWare.mailCheck],
-  authController.loginUser
-);
-
-
-router.get(
-  "/verify", 
-  authController.verifyUser
-);
-
-router.post(
-  "/forget-password",
-  [MiddleWare.emptyCheck, MiddleWare.mailCheck],
-  authController.forgetPassword
-);
 
 router.post(
   "/register" , 
@@ -28,9 +11,33 @@ router.post(
   authController.registerUser
 );
 
+router.get(
+  "/verify", 
+  authController.verifyUser
+);
+
+router.post(
+  "/auth",
+  [MiddleWare.emptyCheck, MiddleWare.mailCheck],
+  authController.loginUser
+);
+
+
+router.post(
+  "/forget-password",
+  [MiddleWare.emptyCheck, MiddleWare.mailCheck],
+  authController.forgetPassword
+);
+
+
+router.get(
+  "/reset-password",
+  authController.resetPassPage
+); 
+
 router.post(
   "/reset-password",
-  [MiddleWare.passwordCheck,MiddleWare.confirmPassCheck],
+  [ MiddleWare.emptyCheck, MiddleWare.passwordCheck,MiddleWare.confirmPassCheck],
   authController.resetPass
 ); 
 
@@ -43,15 +50,20 @@ router.put(
 );
 
 router.get(
-  '/change-role' ,
-  [MiddleWare.checkToken ] ,
+  "/change-role" ,
+  [ MiddleWare.checkToken ] ,
   authController.changeRoles
 );
 
 router.post(
   "/getInfo",
-  [MiddleWare.emptyCheck,MiddleWare.checkToken],
+  [MiddleWare.checkToken],
   authController.recognizeRole
+);
+
+router.post(
+  "/emailList",
+  authController.getEmails
 )
 
 router.post("/google-signup",authController.googleVerify)  ;

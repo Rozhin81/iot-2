@@ -4,6 +4,7 @@ const slaveController = require("./slaveController");
 const { MiddleWare } = require("../../lib/middleware")
 const Role = require("../../lib/roles_list")
 
+
 router.post("/slave",
     [MiddleWare.checkToken, MiddleWare.emptyCheck , MiddleWare.verifyRoles(Role.ADMIN,Role.SUPERADMIN)],
     slaveController.add);

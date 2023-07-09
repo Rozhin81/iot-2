@@ -1,0 +1,1 @@
+[{"S009":[{"content":"temp","operator":">","value":2,"status":"or"},{"content":"temp","operator":"<","value":10,"status":"or"}]},{"S001":[{"content":"light","operator":"<","value":10,"status":"and"},{"content":"light","operator":">","value":2,"status":"then","message":"fan on"}]}]

@@ -1,10 +1,10 @@
 let jwt = require("jsonwebtoken");
 let { accounts } = require("../model/account");
 class Token {
-  generateToken(jsonData) {
+  generateToken(jsonData , expirTime) {
     return new Promise((resolve, reject) => {
       let token = jwt.sign(jsonData, process.env.SECRET_KEY, {
-        expiresIn: process.env.TOKEN_EXPIRE_TIME
+        expiresIn : expirTime
       })
       if (token) {
         resolve(token)
@@ -18,11 +18,14 @@ class Token {
 
 
   verifyToken(token) {
+    console.log(token)
     return new Promise((resolve, reject) => {
-      jwt.verify(token, process.env.SECRET_KEY, (err, decodedToken) => {
+      jwt.verify(token, process.env.SECRET_KEY, async(err, decodedToken) => {
         if (err) {
-          reject(err);
-        } else {
+          let userEmail = jwt.decode(token)
+          reject(userEmail)
+        }
+         else {
           resolve(decodedToken);
         }
       });

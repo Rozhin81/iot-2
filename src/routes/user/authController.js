@@ -23,14 +23,14 @@ module.exports = {
     } else {
       let hashed = await AuthService.hashPassword(pass)
       AuthService.addNewPerson(req.body, hashed , Role.USER).then((user)=>{
-        let userToken = token.generateToken({ email: user.email, id: user._id, role: Role.USER});
+        let userToken = token.generateToken({ email: user.email, id: user._id, role: Role.USER} , '900000');
         userToken.then((token) => {
           send_email(
-            "sendLink.html",
-            (replacement = {
+            "verifyEmail.ejs",
+            {
               name: req.body.fullname,
-              link: `http://greenhouse.runflare.run/accounts/verify?token=${token}`,
-            }),
+              user_token:token
+            },
             req.body.email,
             "Verify your account"
           );
@@ -58,7 +58,7 @@ module.exports = {
     const password = req.body.password.trim();
     let p = AuthService.loginCheck(email, password);
     p.then(async (message) => {
-      await token.generateToken({ email: message.email, id: message._id, role: message.role })
+      await token.generateToken({ email: message.email, id: message._id, role: message.role },'3024000000')
       .then((data) => {
           console.log(data)
         return res.status(200).send({
@@ -87,22 +87,32 @@ module.exports = {
     });
   },
 
-  verifyUser: (req, res, next) => {
+  
+  verifyUser: async(req, res, next) => {
     const user_token = req.query.token;
     let p = token.verifyToken(user_token);
     p.then(async (message) => {
-      AuthService.find_Update(message.email, { status: "active" });
-      return res.status(200).send({
-        status: "Ok",
-        message: "set account to active",
-        data: {},
-      });
-    }).catch((message) => {
-      return res.status(406).send({
-        status: "error",
-        message: "the token is not correct or expired",
-        data: {},
-      });
+        AuthService.find_Update(message.email, { status: "active" });
+        res.render("emailVerified.ejs" ,  console.log("set account to active"))
+
+    }).catch(async(message) => {
+      let checkStatus = await accounts.findOne({email : message.email})
+      if(checkStatus.status=='deactive'){
+        await accounts.deleteOne({email : message.email});
+        return res.status(401).send({
+          status: "error",
+          message: "the token is not correct or expired",
+          data: {},      
+        });
+      }else{
+        // 208 : qablan gozaresh shode
+        return res.status(208).send({
+          status: "error",
+          message: "your account was activated",
+          data: {},
+        });
+      }
+
     });
   },
 
@@ -110,18 +120,19 @@ module.exports = {
   forgetPassword: async (req, res, next) => {
     const email = req.body.email.trim();
     let user = await Validation.existToDB(email);
-    if (user == true) {
+    if (user != false) {
       let randomHash = await AuthService.hashPassword("\\w+")
       AuthService.deleteHash(email);
       AuthService.addHash(email, randomHash);
-      let userToken = await token.generateToken({ email: email });
+      let userToken = await token.generateToken({ email: email } , '900000');
       console.log(userToken)
       send_email(
-        "sendLink.html",
-        (replacement = {
-          name: user.fullname,
-          link: `http://greenhouse.runflare.run/accounts/getInfo/accounts/reset-password?hash=${randomHash}`,
-        }),
+        "forgetPass.ejs",
+        {
+          name : user.fullname,
+          token : userToken,
+          forgetDynamicUrl : randomHash,
+        },
         email,
         "Reset password"
       );
@@ -141,17 +152,25 @@ module.exports = {
     }
   },
 
+  resetPassPage : (req,res)=>{
+    res.render("newPass")
+  },
 
-  resetPass: async (req, res) => {
-    let findHash = await hashs.findOne({ hash: req.query.hash });
+
+  resetPass: async (req, res , next) => {
+    let findHash = await hashs.findOne({ hash: req.body.hash });
     try{
       console.log(findHash)
+
       console.log(Date.now() - findHash.time_created)
       if (Date.now() - findHash.time_created <= 172800000) {
         let hash = await AuthService.hashPassword(req.body.password);
+        console.log("hiiiiiiii")
         let p = token.verifyToken(req.body.token);
         p.then(async (message) => {
-          AuthService.find_Update(message.email, { password: hash })
+          AuthService.find_Update(message.email, { password: hash });
+          // res.render("passwordReset");
+          // next()
           return res.status(200).send({
             status: "Ok",
             message: "your password was reset successfully!",
@@ -166,7 +185,6 @@ module.exports = {
             });
 
           });
-
       }
       else {
         return res.status(403).send({
@@ -176,7 +194,7 @@ module.exports = {
         });
       }
     }catch{
-      console.log("can't find hash")
+      console.log("can't find user")
     }
 
   },
@@ -206,11 +224,12 @@ module.exports = {
 
   changeRoles : (req,res,next)=>{
       AuthService.updateRole(req.body.user_email , req.body.newRole)
-      .then((message)=>{
+      .then(async(message)=>{
+        const newRole = await accounts.findOne({email : req.body.user_email})
       return res.status(200).send({
         status : "Ok" ,
         message : "Change the role of given user" ,
-        data : {message}
+        data : {newRole}
       })
       }).catch((message)=>{
       return res.status(404).send({
@@ -222,8 +241,8 @@ module.exports = {
   },
 
   recognizeRole:(req,res,next)=>{
-    if(req.headers['authorization']){
-      token.verifyToken(req.headers['authorization'])
+    if(req.body.authorization ||req.headers['authorization']){
+      token.verifyToken(req.body.authorization || req.headers['authorization'])
       .then((message)=>{
         return res.status(200).send({
           status : "ok",
@@ -238,7 +257,49 @@ module.exports = {
         })
       })
 
+    }else{
+      return res.status(404).send({
+        status:"error",
+        message:"token not found",
+        data : message
+      })
     }
+  },
+
+  getEmails : async(req,res)=>{
+    const email = await accounts.find();
+    if(email!=null){
+      let emailSender = token.verifyToken(req.headers['authorization']);
+      emailSender.then((message)=>{
+        var infoList =[]
+        for(let each_email of email){
+          let emailUser = each_email.email
+          let roleUser =each_email.role
+          infoList.push({email : emailUser , role :roleUser});
+          // console.log(infoList)
+        }
+        let removeItem = infoList.indexOf(emailSender)
+        infoList.splice(removeItem , 1)
+        console.log(infoList)
+        return res.status(200).send({
+          status : "Ok",
+          message : "all users",
+          data : infoList
+        })
+      }).catch((message)=>{
+        return res.status(401).send({
+          status : "error",
+          message : message,
+          data : {}
+        })
+      })
+      }else{
+        return res.status(404).send({
+          status:"error",
+          message:"no emails",
+          data : {}
+        })
+      }
   },
 
   googleVerify: async (req, res) => {
