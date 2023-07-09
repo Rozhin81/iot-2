@@ -6,7 +6,6 @@ const {PlantSensorData} = require("../../model/sensorData");
 
 
 module.exports = {
-    
     add : async function(req,res){
             let findSlave = await slaves.findOne({slaveId : req.body.slaveId})
             if(findSlave==null){

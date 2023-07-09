@@ -19,6 +19,7 @@ class PlantService {
     return foundPlants;
   }
 
+  
  static async addNewPlant(req,user_id) {
       await plants.create({
         user_id:user_id,

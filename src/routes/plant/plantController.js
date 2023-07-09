@@ -41,7 +41,6 @@ module.exports = {
       });
   },
 
-  
   listOfPlants: async (req, res, next) => {
     const search = req.query.search;
     console.log(req.decoded)

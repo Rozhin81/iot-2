@@ -15,9 +15,6 @@ class MasterService{
                 reject(false)
             }   
         })
-
-      
-
     };
 
     static  deleteMaster(masterId,userId){

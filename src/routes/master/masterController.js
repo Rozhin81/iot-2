@@ -35,7 +35,6 @@ module.exports = {
 
     }
     ,
-
     deleteMaster: async (req, res) => {
         let masterId = req.params.id;
         let userId=req.decoded.id;

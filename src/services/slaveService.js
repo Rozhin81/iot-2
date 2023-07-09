@@ -3,6 +3,7 @@ const {plants} = require("../model/plant");
 const {Token} = require("../lib/token")
 const {PlantSensorData} = require("../model/sensorData")
 
+
 class SlaveService {
     static async addNewSlave(req,userId){
         let body = req.body;

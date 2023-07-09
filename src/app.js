@@ -17,6 +17,7 @@ app.set("view engine" , "ejs")
 app.use('/public' , express.static('public'));
 
 
+
 app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
